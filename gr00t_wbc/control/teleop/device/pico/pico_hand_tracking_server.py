@@ -144,13 +144,32 @@ class PicoHandTrackingServer:
 
 @click.command()
 @click.option("--port", type=int, default=5557, help="ZMQ port to bind to (default: 5557)")
-def main(port):
-    """Run the Pico hand tracking server."""
-    print(f"Starting Pico hand tracking server on port {port}...")
+@click.option("--host", type=str, default="*", help="Host to bind to (default: * for all interfaces)")
+def main(port, host):
+    """Run the Pico hand tracking server.
+    
+    The server binds to all interfaces (*) by default, allowing remote connections.
+    To find your IP address for clients to connect:
+        Linux/Mac: hostname -I or ifconfig
+        Windows: ipconfig
+    """
+    print(f"Starting Pico hand tracking server on {host}:{port}...")
     server = PicoHandTrackingServer(port=port)
     print("Activating server...")
     with server.activate():
-        print(f"==> Pico hand tracking server is running at port {port}")
+        # Get local IP for display
+        import socket
+        try:
+            # Connect to a dummy address to get local IP
+            s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+            s.connect(("8.8.8.8", 80))
+            local_ip = s.getsockname()[0]
+            s.close()
+            print(f"==> Pico hand tracking server is running")
+            print(f"==> Listening on all interfaces (0.0.0.0:{port})")
+            print(f"==> Clients can connect to: {local_ip}:{port}")
+        except Exception:
+            print(f"==> Pico hand tracking server is running at port {port}")
         server.run()
 
 

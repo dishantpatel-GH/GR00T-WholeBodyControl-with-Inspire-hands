@@ -10,6 +10,8 @@ This guide shows how to run the system with two Pico controllers:
 2. **Pico service** should be running (automatically started by the server)
 3. **ROS2** environment should be set up (for the control loop)
 
+> **Note:** For using different laptops (server on one, client on another), see `REMOTE_SERVER_SETUP.md`
+
 ## Step-by-Step Setup
 
 ### Step 1: Start the Control Loop (Terminal 1)

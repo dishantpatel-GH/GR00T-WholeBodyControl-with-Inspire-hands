@@ -45,15 +45,19 @@ python -m gr00t_wbc.control.main.teleop.run_teleop_policy_loop \
     --hand_tracking_server_port 5558
 ```
 
-### Remote Server
+### Remote Server (Different Laptop)
 ```bash
-# Client (connecting to remote server)
+# Server (on Laptop B with Pico #2)
+python scripts/run_pico_hand_tracking_server.py
+
+# Client (on Laptop A with Pico #1)
 python -m gr00t_wbc.control.main.teleop.run_teleop_policy_loop \
     --body_control_device pico \
     --hand_control_device pico_hand_tracking \
     --hand_tracking_server_host 192.168.1.100 \
     --hand_tracking_server_port 5557
 ```
+> **See `REMOTE_SERVER_SETUP.md` for detailed remote setup instructions**
 
 ---
 
