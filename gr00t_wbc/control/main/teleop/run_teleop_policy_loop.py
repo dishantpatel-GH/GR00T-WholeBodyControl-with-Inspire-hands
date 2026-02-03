@@ -53,6 +53,8 @@ def main(config: TeleopConfig):
             body_streamer_keyword=config.body_streamer_keyword,
             enable_real_device=config.enable_real_device,
             replay_data_path=config.teleop_replay_path,
+            hand_tracking_server_host=config.hand_tracking_server_host,
+            hand_tracking_server_port=config.hand_tracking_server_port,
         )
 
     # Create a publisher for the navigation commands

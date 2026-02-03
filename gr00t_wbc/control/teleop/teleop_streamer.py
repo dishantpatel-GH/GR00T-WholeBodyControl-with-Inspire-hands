@@ -19,6 +19,8 @@ class TeleopStreamer:
         body_streamer_keyword="",
         replay_data_path: Optional[str] = None,
         replay_speed: float = 1.0,
+        hand_tracking_server_host: str = "localhost",
+        hand_tracking_server_port: int = 5557,
     ):
         # initialize the body
         self.body = robot_model
@@ -28,6 +30,8 @@ class TeleopStreamer:
         self.body_streamer_ip = body_streamer_ip
         self.body_streamer_keyword = body_streamer_keyword
         self.replay_speed = replay_speed
+        self.hand_tracking_server_host = hand_tracking_server_host
+        self.hand_tracking_server_port = hand_tracking_server_port
 
         # enable real robot and devices
         self.enable_real_device = enable_real_device
@@ -90,6 +94,18 @@ class TeleopStreamer:
                     from gr00t_wbc.control.teleop.streamers.pico_streamer import PicoStreamer
 
                     self.hand_streamer = PicoStreamer()
+                    self.hand_streamer.start_streaming()
+                elif hand_control_device == "pico_hand_tracking":
+                    from gr00t_wbc.control.teleop.streamers.pico_hand_tracking_client_streamer import (
+                        PicoHandTrackingClientStreamer,
+                    )
+
+                    # Get server host/port from config if available, otherwise use defaults
+                    server_host = getattr(self, "hand_tracking_server_host", "localhost")
+                    server_port = getattr(self, "hand_tracking_server_port", 5557)
+                    self.hand_streamer = PicoHandTrackingClientStreamer(
+                        server_host=server_host, server_port=server_port
+                    )
                     self.hand_streamer.start_streaming()
                 else:
                     self.hand_streamer = None

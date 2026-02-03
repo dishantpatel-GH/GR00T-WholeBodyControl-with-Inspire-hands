@@ -237,6 +237,10 @@ class TeleopConfig(BaseConfig):
     body_streamer_keyword: str = "foot"
     teleop_frequency: float = 20
     binary_hand_ik: bool = True
+    hand_tracking_server_host: str = "localhost"
+    """Host where the Pico hand tracking server is running (for pico_hand_tracking device)"""
+    hand_tracking_server_port: int = 5557
+    """Port where the Pico hand tracking server is listening (for pico_hand_tracking device)"""
 
 @dataclass
 class ComposedCameraClientConfig:

@@ -21,7 +21,7 @@ class TeleopPolicy(Policy):
     def __init__(
         self,
         body_control_device: str,
-        hand_control_device: str,
+        hand_control_device: Optional[str],
         robot_model: RobotModel,
         retargeting_ik: TeleopRetargetingIK,
         body_streamer_ip: str = "192.168.?.?",
@@ -31,6 +31,8 @@ class TeleopPolicy(Policy):
         replay_speed: float = 1.0,
         wait_for_activation: int = 5,
         activate_keyboard_listener: bool = True,
+        hand_tracking_server_host: str = "localhost",
+        hand_tracking_server_port: int = 5557,
     ):
         if activate_keyboard_listener:
             from gr00t_wbc.control.utils.keyboard_dispatcher import KeyboardListenerSubscriber
@@ -50,6 +52,8 @@ class TeleopPolicy(Policy):
             body_streamer_keyword=body_streamer_keyword,
             replay_data_path=replay_data_path,
             replay_speed=replay_speed,
+            hand_tracking_server_host=hand_tracking_server_host,
+            hand_tracking_server_port=hand_tracking_server_port,
         )
         self.robot_model = robot_model
         self.retargeting_ik = retargeting_ik
