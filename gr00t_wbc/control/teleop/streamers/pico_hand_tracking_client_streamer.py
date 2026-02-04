@@ -1,7 +1,6 @@
 """Client streamer for receiving hand tracking data from Pico hand tracking server.
 
-This streamer connects to a Pico hand tracking server (running on a different Pico)
-and receives hand tracking data, formatting it for use in the teleop system.
+FIXED VERSION: Handles ZMQ socket state issues by resetting socket on timeout.
 """
 
 import pickle
@@ -45,13 +44,22 @@ class PicoHandTrackingClientStreamer(BaseStreamer):
         
         # Setup ZMQ client
         self.context = zmq.Context()
+        self._create_socket()
+        
+        print(f"Connected to Pico hand tracking server")
+
+    def _create_socket(self):
+        """Create or recreate the ZMQ socket."""
+        if self.socket is not None:
+            self.socket.close()
+        
         self.socket = self.context.socket(zmq.REQ)
         self.socket.connect(f"tcp://{self.server_host}:{self.server_port}")
         
         # Set socket timeout to avoid blocking forever
-        self.socket.setsockopt(zmq.RCVTIMEO, 2000)  # 2 second timeout
-        
-        print(f"Connected to Pico hand tracking server")
+        self.socket.setsockopt(zmq.RCVTIMEO, 1000)  # 1 second timeout
+        self.socket.setsockopt(zmq.SNDTIMEO, 1000)  # 1 second send timeout
+        self.socket.setsockopt(zmq.LINGER, 0)       # Don't wait on close
 
     def _request_data(self):
         """Request hand tracking data from the server.
@@ -76,11 +84,26 @@ class PicoHandTrackingClientStreamer(BaseStreamer):
                 return None
                 
             return data
+            
         except zmq.Again:
-            print("Timeout waiting for server response")
+            # Timeout occurred - socket is now in bad state
+            print("Timeout waiting for server response - resetting socket")
+            self._create_socket()  # Reset socket to recover
             return None
+            
+        except zmq.ZMQError as e:
+            # Other ZMQ errors
+            print(f"ZMQ error: {e} - resetting socket")
+            self._create_socket()  # Reset socket to recover
+            return None
+            
         except Exception as e:
             print(f"Error requesting data from server: {e}")
+            # Try to reset socket on any error
+            try:
+                self._create_socket()
+            except:
+                pass
             return None
 
     def _generate_finger_data(self, hand_joints, headset_pose, hand_side):

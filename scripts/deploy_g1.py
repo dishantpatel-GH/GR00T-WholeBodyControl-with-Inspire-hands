@@ -272,6 +272,17 @@ class G1Deployment:
             self.config.body_streamer_keyword,
         ]
 
+        # Add hand tracking server parameters (for pico_hand_tracking device)
+        if self.config.hand_control_device == "pico_hand_tracking":
+            cmd.extend(
+                [
+                    "--hand_tracking_server_host",
+                    self.config.hand_tracking_server_host,
+                    "--hand_tracking_server_port",
+                    str(self.config.hand_tracking_server_port),
+                ]
+            )
+
         # Handle boolean flags using tyro syntax
         if self.config.enable_waist:
             cmd.append("--enable_waist")

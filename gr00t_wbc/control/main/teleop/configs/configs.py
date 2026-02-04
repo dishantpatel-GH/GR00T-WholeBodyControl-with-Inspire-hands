@@ -176,6 +176,12 @@ class BaseConfig(ArgsConfigTemplate):
     teleop_replay_path: Optional[str] = None
     """Path to teleop replay data."""
 
+    # Hand Tracking Server Configuration (for pico_hand_tracking device)
+    hand_tracking_server_host: str = "localhost"
+    """Host where the Pico hand tracking server is running (for pico_hand_tracking device)"""
+    hand_tracking_server_port: int = 5557
+    """Port where the Pico hand tracking server is listening (for pico_hand_tracking device)"""
+
     # Deployment/Camera Configuration
     robot_ip: str = "192.168.123.164"
     """Robot IP address"""
